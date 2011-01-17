@@ -17,6 +17,16 @@ var com_zedmonk_stocks = (function() {
         }
     }
 
+    function bind(obj, method) {
+        return function() {
+            var args = [];
+            for(var n = 0; n < arguments.length; n++) {
+                args.push(arguments[n]);
+            }
+            obj[method].apply(obj, args);
+        };
+    }
+
     function StocksView(controller) {
         if(!this instanceof StocksView) {
             return new StocksView(controller);
@@ -25,10 +35,8 @@ var com_zedmonk_stocks = (function() {
     }
 
     StocksView.prototype.load_stock_list = function() {
-        var obj = this;
-        this.controller.get_stock_list(
-            function(s) {obj.insert_stocks(s);}
-        );
+        var callback = bind(this, 'insert_stocks');
+        this.controller.get_stock_list(callback);
     }
 
     StocksView.prototype.insert_stocks = function(stocks) {
@@ -41,16 +49,12 @@ var com_zedmonk_stocks = (function() {
     }
 
     StocksView.prototype.init_stock_form = function() {
-        var obj = this;
-        listen('submit', $('add_symbol'), function(event) {
-            obj.submit_stock(event);
-        });
+        listen('submit', $('add_symbol'), bind(this, 'submit_stock'));
     }
 
     StocksView.prototype.submit_stock = function(event) {
-        var obj = this;
         var symbol = event.srcElement['symbol'].value;
-        var callback = function(s) {obj.insert_stocks(s);};
+        var callback = bind(this, 'insert_stocks');
         this.controller.add_stock(symbol, callback);
         event.preventDefault ? event.preventDefault() : event.returnValue = false;
     }
@@ -97,7 +101,7 @@ var com_zedmonk_stocks = (function() {
     var controller = new StocksController;
     var view = new StocksView(controller);
 
-    listen('load', window, function(){view.load_stock_list();});
-    listen('load', window, function(){view.init_stock_form();});
+    listen('load', window, bind(view, 'load_stock_list'));
+    listen('load', window, bind(view, 'init_stock_form'));
 
 })();
