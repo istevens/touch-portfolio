@@ -65,34 +65,40 @@ var com_zedmonk_stocks = (function() {
             alert('This demo needs a HTML5 database.');
         }
         else {
-            this.db.transaction(function(tx) {
-                tx.executeSql('CREATE TABLE IF NOT EXISTS stocks(\
+            this.transaction(
+                'CREATE TABLE IF NOT EXISTS stocks(\
                     name STRING NOT NULL,\
                     symbol STRING NOT NULL PRIMARY KEY\
-                );', []);
-            });
+                );',
+                []
+            );
         }
     }
 
-    StocksController.prototype.get_stock_list = function(callback) {
+    StocksController.prototype.transaction = function(sql, args, success, failure) {
         this.db.transaction(function(tx) {
-            tx.executeSql('SELECT * from stocks;', [], function(tx,rs) {callback(rs.rows);});
+            tx.executeSql(sql, args, success, failure);
         });
     }
 
+    StocksController.prototype.rs_bind = function(callback) {
+        return function(tx, rs) {callback(rs.rows);}
+    }
+
+    StocksController.prototype.get_stock_list = function(callback) {
+        this.transaction('SELECT * from stocks;', [], this.rs_bind(callback));
+    }
+
     StocksController.prototype.add_stock = function(symbol, callback) {
-        this.db.transaction(
-            function(tx) {
+        obj = this;
+        this.transaction(
+            'INSERT INTO stocks (name, symbol) VALUES(?,?);', 
+            ['', symbol],
+            function(tx, stocks) {
                 tx.executeSql(
-                    'INSERT INTO stocks (name, symbol) VALUES(?,?);', 
-                    ['', symbol],
-                    function(tx, stocks) {
-                        tx.executeSql(
-                            'SELECT * from stocks where rowid=?;', 
-                            [stocks.insertId], 
-                            function(tx,rs) {callback(rs.rows);}
-                        );
-                    }
+                    'SELECT * from stocks where rowid=?;', 
+                    [stocks.insertId], 
+                    obj.rs_bind(callback)
                 );
             }
         );
