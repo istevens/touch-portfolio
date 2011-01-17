@@ -13,7 +13,7 @@ var com_zedmonk_stocks = (function() {
             return r;
         }
         else {
-            window.alert('This browser not supported.');
+            throw('This browser not supported.');
         }
     }
 
@@ -60,9 +60,13 @@ var com_zedmonk_stocks = (function() {
     }
 
     StocksController = function() {
-        this.db = window.openDatabase('com.zedmonk.stocks', '0.1', 'A list of stocks', 10000);
+        this.db = null;
+        if(window.openDatabase) {
+            this.db = window.openDatabase('com.zedmonk.stocks', '0.1', 'A list of stocks', 10000);
+        }
+
         if(!this.db) {
-            alert('This demo needs a HTML5 database.');
+            throw('This demo needs a HTML5 database.');
         }
         else {
             this.transaction(
@@ -104,10 +108,18 @@ var com_zedmonk_stocks = (function() {
         );
     }
 
-    var controller = new StocksController;
-    var view = new StocksView(controller);
+    try {
+        var controller = new StocksController;
+        var view = new StocksView(controller);
 
-    listen('load', window, bind(view, 'load_stock_list'));
-    listen('load', window, bind(view, 'init_stock_form'));
+        listen('load', window, bind(view, 'load_stock_list'));
+        listen('load', window, bind(view, 'init_stock_form'));
+    } catch(e) {
+        if(window.alert) {
+            window.alert(e);
+        } else {
+            throw(e);
+        }
+    }
 
 })();
