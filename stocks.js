@@ -49,14 +49,21 @@ var com_zedmonk_stocks = (function() {
     }
 
     StocksView.prototype.init_stock_form = function() {
-        listen('submit', $('add_symbol'), bind(this, 'submit_stock'));
+        listen('click', $('add_symbol_button'), bind(this, 'display_add_form'));
+        listen('submit', $('add_symbol').firstElementChild, bind(this, 'submit_stock'));
+    }
+
+    StocksView.prototype.display_add_form = function() {
+        $('add_symbol').style.setProperty('display', 'inline');
     }
 
     StocksView.prototype.submit_stock = function(event) {
-        var symbol = event.srcElement['symbol'].value;
+        var form = event.srcElement
+        var symbol = form['symbol'].value;
         var callback = bind(this, 'insert_stocks');
         this.controller.add_stock(symbol, callback);
         event.preventDefault ? event.preventDefault() : event.returnValue = false;
+        form.parentElement.style.setProperty('display', 'none');
     }
 
     StocksController = function() {
@@ -109,7 +116,7 @@ var com_zedmonk_stocks = (function() {
     }
 
     try {
-        var controller = new StocksController;
+        var controller = new StocksController();
         var view = new StocksView(controller);
 
         listen('load', window, bind(view, 'load_stock_list'));

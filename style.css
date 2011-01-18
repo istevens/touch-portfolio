@@ -6,12 +6,27 @@ body {
     margin: 0;
 }
 
-body>header {
+section>header {
     background: darkgrey;
     color: black;
     text-align: center;
     height: 5em;
     padding: 0.125em;
+}
+
+section>header .button {
+    font-size: inherit;
+    margin-right: 2em;
+    background-color: grey;
+    position: relative;
+    top: -4.25em;
+    border: outset grey 0.25em;
+    padding: 1em;
+    -webkit-border-radius: 0.5em;
+}
+
+section>header .next_button {
+    float: right;
 }
 
 table {
@@ -29,4 +44,8 @@ table>tr:nth-child(even) {
 
 table>tr:nth-child(odd) {
     background-color: grey;
+}
+
+section#add_symbol {
+    display: none;
 }

@@ -4,20 +4,26 @@
     <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
-    <header>
-        <h1>Stocks</h1>
-    </header>
+    <section id="stocks">
+        <header>
+            <h1>Stocks</h1>
+            <button id="add_symbol_button" class="next_button button">+</button>
+        </header>
 
-    <form id="add_symbol">
-        <label for="symbol">Symbol:</label> <input type="text" name="symbol"/>
-        <input type="submit" value="Add Stock"/>
-    </form>
+        <table id="stock_list">
+            <thead>
+                <tr><th>Company</th><th>Symbol</th></tr>
+            </thead>
+        </table>
 
-    <table id="stock_list">
-        <thead>
-            <tr><th>Company</th><th>Symbol</th></tr>
-        </thead>
-    </table>
+    </section>
+
+    <section id="add_symbol">
+        <form id="add_symbol">
+            <label for="symbol">Symbol:</label> <input type="text" name="symbol"/>
+            <input type="submit" value="Add Stock"/>
+        </form>
+    </section>
 
 </body>
 </html>
